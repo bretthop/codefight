@@ -70,10 +70,13 @@
 
             // Coords from 0 to 74
 
+			// TODO: Make into a proper lib
+			var globals = {};
+			
             function place()
             {
-                evalAndDraw('p1PlacementCode', 'red');
-                evalAndDraw('p2PlacementCode', 'blue');
+                globals.p1Pos = evalAndDraw('p1PlacementCode', 'red');
+                globals.p2Pos = evalAndDraw('p2PlacementCode', 'blue');
             }
 
             function start()
@@ -84,14 +87,29 @@
 
             function fire()
             {
-                evalAndDraw('p1AimingCode', 'black');
-                evalAndDraw('p2AimingCode', 'grey');
-            }
+                var p1Move = evalAndDraw('p1AimingCode', 'black');
+				if (hasWon(p1Move, globals.p2Pos)) {
+					alert('Player 1 wins!');
+				}
+				
+                var p2Move = evalAndDraw('p2AimingCode', 'grey');
+				if (hasWon(p2Move, globals.p1Pos)) {
+					alert('Player 2 wins!');
+				}
+			}
 
+			function hasWon(A, B)
+			{
+				// TODO!
+				return false;
+			}
+			
             function evalAndDraw(id, colour)
             {
                 var coords = eval(document.getElementById(id).value);
                 drawRect(coords.x, coords.y, colour);
+				
+				return coords;
             }
 
             function drawRect(x, y, colour)
