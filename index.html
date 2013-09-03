@@ -1,0 +1,106 @@
+<html>
+    <body>
+        <div style="margin: auto; width: 1070px;">
+            <div style="float: left; height: 390px; width: 530px;">
+                <h2 style="text-align: center;">Player 1</h2>
+                <div>
+                    <h3>Placement code:</h3>
+<textarea id="p1PlacementCode" style="width: 500px; height: 100px;">
+(function() {
+    return {
+        x: new Number(Math.random() * 100 % 74).toFixed(),
+        y: new Number(Math.random() * 100 % 74).toFixed()
+    };
+})();</textarea>
+                </div>
+                <div>
+                    <h3 >Aiming code:</h3>
+<textarea id="p1AimingCode" style="width: 500px; height: 100px;">
+(function() {
+    return {
+        x: new Number(Math.random() * 100 % 74).toFixed(),
+        y: new Number(Math.random() * 100 % 74).toFixed()
+    };
+})();</textarea>
+                </div>
+            </div>
+            <div style="float: left; height: 390px; width: 530px;">
+                <h2 style="text-align: center;">Player 2</h2>
+                <div>
+                    <h3>Placement code:</h3>
+<textarea id="p2PlacementCode" style="width: 500px; height: 100px;">
+(function() {
+    return {
+        x: new Number(Math.random() * 100 % 74).toFixed(),
+        y: new Number(Math.random() * 100 % 74).toFixed()
+    };
+})();</textarea>
+                </div>
+                <div>
+                    <h3 >Aiming code:</h3>
+<textarea id="p2AimingCode" style="width: 500px; height: 100px;">
+(function() {
+    return {
+        x: new Number(Math.random() * 100 % 74).toFixed(),
+        y: new Number(Math.random() * 100 % 74).toFixed()
+    };
+})();</textarea>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div>
+                <div style="width: 600px; margin: auto;">
+                    <button onclick="place()">Place!</button>
+                    <button onclick="start()">Start!</button>
+                    <label for="fireInterval">Interval:</label>
+                    <input type="text" id="fireInterval" value="100" />
+                    <div style="border: 1px solid black; height: 600px; width: 600px;">
+                        <canvas id="gameGrid" height="600" width="600" style="margin: auto;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            // TODO: Cache AI code (only eval it once)
+            // TODO: Make pretty
+            // TODO: Make it more like a battleship game
+            // TODO: Add instructions
+            // TODO: Clean up CSS and JS (put into separate files etc etc)
+
+            // Coords from 0 to 74
+
+            function place()
+            {
+                evalAndDraw('p1PlacementCode', 'red');
+                evalAndDraw('p2PlacementCode', 'blue');
+            }
+
+            function start()
+            {
+                fire();
+                setInterval(fire, Number(document.getElementById('fireInterval').value));
+            }
+
+            function fire()
+            {
+                evalAndDraw('p1AimingCode', 'black');
+                evalAndDraw('p2AimingCode', 'grey');
+            }
+
+            function evalAndDraw(id, colour)
+            {
+                var coords = eval(document.getElementById(id).value);
+                drawRect(coords.x, coords.y, colour);
+            }
+
+            function drawRect(x, y, colour)
+            {
+                var c = document.getElementById("gameGrid");
+                var ctx = c.getContext("2d");
+                ctx.fillStyle = colour;
+                ctx.fillRect(x * 8, y * 8, 8, 8);
+            }
+        </script>
+    </body>
+</html>
