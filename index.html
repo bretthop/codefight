@@ -50,8 +50,8 @@
             <div style="clear: both;"></div>
             <div>
                 <div style="width: 600px; margin: auto;">
-                    <button onclick="place()">Place!</button>
-                    <button onclick="start()">Start!</button>
+                    <button onclick="codefight.place()">Place!</button>
+                    <button onclick="codefight.start()">Start!</button>
                     <label for="fireInterval">Interval:</label>
                     <input type="text" id="fireInterval" value="100" />
                     <div style="border: 1px solid black; height: 600px; width: 600px;">
@@ -70,55 +70,69 @@
 
             // Coords from 0 to 74
 
-			// TODO: Make into a proper lib
-			var globals = {};
-			
-            function place()
-            {
-                globals.p1Pos = evalAndDraw('p1PlacementCode', 'red');
-                globals.p2Pos = evalAndDraw('p2PlacementCode', 'blue');
-            }
+			var codefight = (function() {
+				var _cf = {};
 
-            function start()
-            {
-                fire();
-                setInterval(fire, Number(document.getElementById('fireInterval').value));
-            }
+				var player = (function(placementColour, aimColour) {
+					var _p = {
+						placementCode: undefined,
+						aimCode: undefined,
+						placementColour: placementColour,
+						aimColour: aimColour
+					};
 
-            function fire()
-            {
-                var p1Move = evalAndDraw('p1AimingCode', 'black');
-				if (hasWon(p1Move, globals.p2Pos)) {
-					alert('Player 1 wins!');
-				}
-				
-                var p2Move = evalAndDraw('p2AimingCode', 'grey');
-				if (hasWon(p2Move, globals.p1Pos)) {
-					alert('Player 2 wins!');
-				}
-			}
+					_p.evalPlacementAndDraw = function()
+					{
+						var coords = eval(_p.placementCode);
+						_cf.drawRect(coords.x, coords.y, _p.placementColour);
+					};
 
-			function hasWon(A, B)
-			{
-				// TODO!
-				return false;
-			}
-			
-            function evalAndDraw(id, colour)
-            {
-                var coords = eval(document.getElementById(id).value);
-                drawRect(coords.x, coords.y, colour);
-				
-				return coords;
-            }
+					_p.evalAimAndDraw = function()
+					{
+						var coords = eval(_p.aimCode);
+						_cf.drawRect(coords.x, coords.y, _p.aimColour);
+					};
 
-            function drawRect(x, y, colour)
-            {
-                var c = document.getElementById("gameGrid");
-                var ctx = c.getContext("2d");
-                ctx.fillStyle = colour;
-                ctx.fillRect(x * 8, y * 8, 8, 8);
-            }
+					return _p;
+				});
+
+				var p1 = player('red', 'black'),
+					p2 = player('blue', 'grey');
+
+				_cf.place = function()
+				{
+					p1.placementCode = document.getElementById('p1PlacementCode').value;
+					p2.placementCode = document.getElementById('p2PlacementCode').value;
+
+					p1.evalPlacementAndDraw();
+					p2.evalPlacementAndDraw();
+				};
+
+				_cf.start = function()
+				{
+					p1.aimCode = document.getElementById('p1AimingCode').value;
+					p2.aimCode = document.getElementById('p2AimingCode').value;
+
+					_cf.fire();
+					setInterval(_cf.fire, Number(document.getElementById('fireInterval').value));
+				};
+
+				_cf.fire = function()
+				{
+					p1.evalAimAndDraw();
+					p2.evalAimAndDraw();
+				};
+
+				_cf.drawRect = function(x, y, colour)
+				{
+					var c = document.getElementById("gameGrid");
+					var ctx = c.getContext("2d");
+					ctx.fillStyle = colour;
+					ctx.fillRect(x * 8, y * 8, 8, 8);
+				};
+
+				return _cf;
+			})();
         </script>
     </body>
 </html>
